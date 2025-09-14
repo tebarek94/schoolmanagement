@@ -89,14 +89,14 @@ A comprehensive backend API for managing primary schools in Addis Ababa, built w
    Update the `.env` file with your configuration:
    ```env
    # Server Configuration
-   PORT=3000
+   PORT=
    NODE_ENV=development
    
    # Database Configuration
    DB_HOST=localhost
-   DB_PORT=3306
+   DB_PORT=
    DB_NAME=school_management
-   DB_USER=root
+   DB_USER=
    DB_PASSWORD=your_password
    
    # JWT Configuration
@@ -120,7 +120,7 @@ A comprehensive backend API for managing primary schools in Addis Ababa, built w
    RATE_LIMIT_MAX_REQUESTS=100
    
    # CORS Configuration
-   CORS_ORIGIN=http://localhost:3000
+   CORS_ORIGIN=
    ```
 
 4. **Database Setup**
@@ -151,113 +151,6 @@ A comprehensive backend API for managing primary schools in Addis Ababa, built w
 ## 📚 API Documentation
 
 ### Base URL
-```
-http://localhost:3000/api
-```
-
-### Authentication Endpoints
-- `POST /auth/login` - User login
-- `POST /auth/register` - User registration
-- `POST /auth/refresh-token` - Refresh JWT token
-- `GET /auth/profile` - Get user profile
-- `PUT /auth/change-password` - Change password
-- `POST /auth/logout` - User logout
-- `GET /auth/verify` - Verify token
-
-### Student Endpoints
-- `GET /students` - Get all students (with pagination)
-- `POST /students` - Create new student
-- `GET /students/:id` - Get student by ID
-- `PUT /students/:id` - Update student
-- `DELETE /students/:id` - Delete student
-- `GET /students/section/:sectionId` - Get students by section
-- `GET /students/grade/:gradeId` - Get students by grade
-- `POST /students/:studentId/enroll` - Enroll student in section
-- `POST /students/:studentId/transfer` - Transfer student
-- `GET /students/stats` - Get student statistics
-
-### Teacher Endpoints
-- `GET /teachers` - Get all teachers (with pagination)
-- `POST /teachers` - Create new teacher
-- `GET /teachers/:id` - Get teacher by ID
-- `PUT /teachers/:id` - Update teacher
-- `DELETE /teachers/:id` - Delete teacher
-- `POST /teachers/:teacherId/assign-subject` - Assign teacher to subject
-- `POST /teachers/:teacherId/assign-class` - Assign class teacher
-- `GET /teachers/:teacherId/subjects` - Get teacher's subjects
-- `GET /teachers/:teacherId/sections` - Get teacher's sections
-- `GET /teachers/stats` - Get teacher statistics
-
-### Parent Endpoints
-- `GET /parents` - Get all parents (with pagination)
-- `POST /parents` - Create new parent
-- `GET /parents/:id` - Get parent by ID
-- `PUT /parents/:id` - Update parent
-- `DELETE /parents/:id` - Delete parent
-- `POST /parents/:parentId/link-student` - Link parent to student
-- `DELETE /parents/:parentId/unlink-student/:studentId` - Unlink parent from student
-- `GET /parents/:parentId/students` - Get parent's students
-- `GET /parents/student/:studentId` - Get student's parents
-- `GET /parents/stats` - Get parent statistics
-
-### Academic Endpoints
-- `GET /academic/grades` - Get all grades
-- `POST /academic/grades` - Create new grade
-- `GET /academic/grades/:id` - Get grade by ID
-- `PUT /academic/grades/:id` - Update grade
-- `DELETE /academic/grades/:id` - Delete grade
-
-- `GET /academic/sections` - Get all sections
-- `POST /academic/sections` - Create new section
-- `GET /academic/sections/:id` - Get section by ID
-- `PUT /academic/sections/:id` - Update section
-- `DELETE /academic/sections/:id` - Delete section
-
-- `GET /academic/subjects` - Get all subjects
-- `POST /academic/subjects` - Create new subject
-- `GET /academic/subjects/:id` - Get subject by ID
-- `PUT /academic/subjects/:id` - Update subject
-- `DELETE /academic/subjects/:id` - Delete subject
-- `POST /academic/subjects/assign-grade` - Assign subject to grade
-- `GET /academic/grades/:gradeId/subjects` - Get subjects by grade
-
-- `GET /academic/academic-years` - Get all academic years
-- `POST /academic/academic-years` - Create new academic year
-- `GET /academic/academic-years/current` - Get current academic year
-- `PUT /academic/academic-years/:yearId/set-current` - Set current academic year
-
-- `GET /academic/academic-years/:academicYearId/terms` - Get terms by academic year
-- `POST /academic/terms` - Create new term
-- `GET /academic/terms/current` - Get current term
-- `PUT /academic/terms/:termId/set-current` - Set current term
-
-### Attendance Endpoints
-- `POST /attendance/mark` - Mark attendance for a student
-- `POST /attendance/mark-bulk` - Mark attendance for multiple students
-- `GET /attendance` - Get attendance records (with pagination)
-- `GET /attendance/:id` - Get attendance by ID
-- `PUT /attendance/:id` - Update attendance
-- `DELETE /attendance/:id` - Delete attendance
-- `GET /attendance/student/:studentId/summary` - Get student attendance summary
-- `GET /attendance/section/:sectionId/summary` - Get section attendance summary
-- `GET /attendance/daily/:date` - Get daily attendance report
-- `GET /attendance/monthly/:year/:month` - Get monthly attendance report
-- `GET /attendance/stats` - Get attendance statistics
-
-### Exam Endpoints
-- `GET /exams/examinations` - Get all examinations (with pagination)
-- `POST /exams/examinations` - Create new examination
-- `GET /exams/examinations/:id` - Get examination by ID
-- `PUT /exams/examinations/:id` - Update examination
-- `DELETE /exams/examinations/:id` - Delete examination
-- `GET /exams/examinations/upcoming` - Get upcoming examinations
-
-- `GET /exams/results` - Get exam results (with pagination)
-- `POST /exams/results` - Add exam result
-- `PUT /exams/results/:id` - Update exam result
-- `GET /exams/examinations/:examinationId/results` - Get exam results by examination
-- `GET /exams/students/:studentId/results` - Get student exam results
-- `GET /exams/stats` - Get exam statistics
 
 ## 🔐 Authentication
 
