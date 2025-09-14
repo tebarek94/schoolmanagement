@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { School, Users, BookOpen, Award, Clock } from 'lucide-react';
+import { School, Users, BookOpen, Award, Clock, Eye, Shield, UserCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface Class {
@@ -16,83 +17,130 @@ interface Class {
   assignments: number;
   exams: number;
   status: 'active' | 'completed' | 'upcoming';
+  teacher_id?: number;
+  teacher_name?: string;
 }
 
 export const TeacherClassesPage: React.FC = () => {
+  const { user, hasRole } = useAuth();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'upcoming'>('all');
 
   useEffect(() => {
-    // Mock data for now - replace with actual API call
-    const mockClasses: Class[] = [
-      {
-        id: 1,
-        name: 'Grade 10 Mathematics',
-        subject: 'Mathematics',
-        grade: '10',
-        room: 'Room 201',
-        schedule: 'Mon, Wed, Fri 9:00-10:30 AM',
-        students: 25,
-        assignments: 5,
-        exams: 2,
-        status: 'active'
-      },
-      {
-        id: 2,
-        name: 'Grade 11 Mathematics',
-        subject: 'Mathematics',
-        grade: '11',
-        room: 'Room 202',
-        schedule: 'Tue, Thu 11:00-12:30 PM',
-        students: 22,
-        assignments: 3,
-        exams: 1,
-        status: 'active'
-      },
-      {
-        id: 3,
-        name: 'Grade 9 Mathematics',
-        subject: 'Mathematics',
-        grade: '9',
-        room: 'Room 105',
-        schedule: 'Mon, Wed 2:00-3:30 PM',
-        students: 28,
-        assignments: 8,
-        exams: 3,
-        status: 'active'
-      },
-      {
-        id: 4,
-        name: 'Grade 12 Advanced Math',
-        subject: 'Advanced Mathematics',
-        grade: '12',
-        room: 'Room 301',
-        schedule: 'Tue, Thu 1:00-2:30 PM',
-        students: 18,
-        assignments: 6,
-        exams: 2,
-        status: 'completed'
-      },
-      {
-        id: 5,
-        name: 'Grade 8 Mathematics',
-        subject: 'Mathematics',
-        grade: '8',
-        room: 'Room 150',
-        schedule: 'Mon, Wed, Fri 10:00-11:00 AM',
-        students: 30,
-        assignments: 4,
-        exams: 2,
-        status: 'upcoming'
-      }
-    ];
+    const fetchClasses = async () => {
+      try {
+        setLoading(true);
+        
+        // Mock data with teacher assignments
+        const mockClasses: Class[] = [
+          {
+            id: 1,
+            name: 'Grade 10 Mathematics',
+            subject: 'Mathematics',
+            grade: '10',
+            room: 'Room 201',
+            schedule: 'Mon, Wed, Fri 9:00-10:30 AM',
+            students: 25,
+            assignments: 5,
+            exams: 2,
+            status: 'active',
+            teacher_id: user?.profile?.id || 1,
+            teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+          },
+          {
+            id: 2,
+            name: 'Grade 11 Mathematics',
+            subject: 'Mathematics',
+            grade: '11',
+            room: 'Room 202',
+            schedule: 'Tue, Thu 11:00-12:30 PM',
+            students: 22,
+            assignments: 3,
+            exams: 1,
+            status: 'active',
+            teacher_id: user?.profile?.id || 1,
+            teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+          },
+          {
+            id: 3,
+            name: 'Grade 9 Mathematics',
+            subject: 'Mathematics',
+            grade: '9',
+            room: 'Room 105',
+            schedule: 'Mon, Wed 2:00-3:30 PM',
+            students: 28,
+            assignments: 8,
+            exams: 3,
+            status: 'active',
+            teacher_id: user?.profile?.id || 1,
+            teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+          },
+          {
+            id: 4,
+            name: 'Grade 12 Advanced Math',
+            subject: 'Advanced Mathematics',
+            grade: '12',
+            room: 'Room 301',
+            schedule: 'Tue, Thu 1:00-2:30 PM',
+            students: 18,
+            assignments: 6,
+            exams: 2,
+            status: 'completed',
+            teacher_id: 2, // Different teacher
+            teacher_name: 'Jane Smith'
+          },
+          {
+            id: 5,
+            name: 'Grade 8 Mathematics',
+            subject: 'Mathematics',
+            grade: '8',
+            room: 'Room 150',
+            schedule: 'Mon, Wed, Fri 10:00-11:00 AM',
+            students: 30,
+            assignments: 4,
+            exams: 2,
+            status: 'upcoming',
+            teacher_id: user?.profile?.id || 1,
+            teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+          },
+          {
+            id: 6,
+            name: 'Grade 7 Science',
+            subject: 'Science',
+            grade: '7',
+            room: 'Room 120',
+            schedule: 'Mon, Wed, Fri 1:00-2:00 PM',
+            students: 24,
+            assignments: 3,
+            exams: 1,
+            status: 'active',
+            teacher_id: 3, // Different teacher
+            teacher_name: 'Mike Johnson'
+          }
+        ];
 
-    setTimeout(() => {
-      setClasses(mockClasses);
-      setLoading(false);
-    }, 1000);
-  }, []);
+        // Filter classes based on user role
+        let filteredClasses = mockClasses;
+        
+        if (hasRole('teacher') && !hasRole('admin')) {
+          // Teachers can only see their own classes
+          filteredClasses = mockClasses.filter(cls => cls.teacher_id === user?.profile?.id);
+        }
+        // Admins can see all classes (no filtering needed)
+
+        setTimeout(() => {
+          setClasses(filteredClasses);
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to fetch classes:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, [user, hasRole]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -127,16 +175,33 @@ export const TeacherClassesPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Classes</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {hasRole('admin') ? 'All Classes' : 'My Classes'}
+          </h1>
           <p className="text-gray-600">
-            Manage your teaching classes and student progress
+            {hasRole('admin') 
+              ? 'View and manage all classes across the school' 
+              : 'Manage your teaching classes and student progress'
+            }
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <School className="h-6 w-6 text-primary-600" />
-          <span className="text-sm font-medium text-gray-500">
-            {activeClasses.length} Active Classes
-          </span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {hasRole('admin') ? (
+              <Shield className="h-6 w-6 text-blue-600" />
+            ) : (
+              <UserCheck className="h-6 w-6 text-green-600" />
+            )}
+            <span className="text-sm font-medium text-gray-500">
+              {hasRole('admin') ? 'Admin View' : 'Teacher View'}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <School className="h-6 w-6 text-primary-600" />
+            <span className="text-sm font-medium text-gray-500">
+              {activeClasses.length} Active Classes
+            </span>
+          </div>
         </div>
       </div>
 
@@ -236,6 +301,11 @@ export const TeacherClassesPage: React.FC = () => {
                   <CardDescription className="text-sm text-gray-500">
                     {cls.subject} - Grade {cls.grade}
                   </CardDescription>
+                  {hasRole('admin') && cls.teacher_name && (
+                    <div className="text-xs text-blue-600 mt-1">
+                      Teacher: {cls.teacher_name}
+                    </div>
+                  )}
                 </div>
                 <Badge className={getStatusColor(cls.status)}>
                   {cls.status}
@@ -273,12 +343,18 @@ export const TeacherClassesPage: React.FC = () => {
               </div>
 
               <div className="flex space-x-2 pt-2">
-                <Button size="sm" className="flex-1">
-                  View Students
-                </Button>
-                <Button size="sm" variant="outline" className="flex-1">
-                  Grade Assignments
-                </Button>
+                <Link to={`/teacher/classes/${cls.id}/students`} className="flex-1">
+                  <Button size="sm" className="w-full">
+                    <Eye className="w-4 h-4 mr-1" />
+                    View Students
+                  </Button>
+                </Link>
+                <Link to={`/teacher/grading?class=${cls.id}`} className="flex-1">
+                  <Button size="sm" variant="outline" className="w-full">
+                    <Award className="w-4 h-4 mr-1" />
+                    Grade Assignments
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

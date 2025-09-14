@@ -35,6 +35,9 @@ import { GradesPage } from './pages/grades/GradesPage';
 import { CoursesPage } from './pages/courses/CoursesPage';
 import { TeacherClassesPage } from './pages/teacher/TeacherClassesPage';
 import { TeacherGradingPage } from './pages/teacher/TeacherGradingPage';
+import { MyExamsPage } from './pages/student/MyExamsPage';
+import { MyPaymentsPage } from './pages/student/MyPaymentsPage';
+import { MyProgressPage } from './pages/student/MyProgressPage';
 
 function App() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -91,9 +94,9 @@ function App() {
         {/* Student & Parent Access */}
         <Route path="grades" element={<RoleRoute roles={['Student', 'Parent']}><GradesPage /></RoleRoute>} />
         <Route path="courses" element={<RoleRoute roles={['Student', 'Parent']}><CoursesPage /></RoleRoute>} />
-        <Route path="student/exams" element={<RoleRoute roles={['Student', 'Parent']}><div>My Exams Page - Coming Soon</div></RoleRoute>} />
-        <Route path="student/payments" element={<RoleRoute roles={['Student', 'Parent']}><div>My Payments Page - Coming Soon</div></RoleRoute>} />
-        <Route path="student/progress" element={<RoleRoute roles={['Student', 'Parent']}><div>My Progress Page - Coming Soon</div></RoleRoute>} />
+        <Route path="student/exams" element={<RoleRoute roles={['Student', 'Parent']}><MyExamsPage /></RoleRoute>} />
+        <Route path="student/payments" element={<RoleRoute roles={['Student', 'Parent']}><MyPaymentsPage /></RoleRoute>} />
+        <Route path="student/progress" element={<RoleRoute roles={['Student', 'Parent']}><MyProgressPage /></RoleRoute>} />
 
         {/* Teacher Access */}
         <Route path="teacher/classes" element={<RoleRoute roles={['Teacher']}><TeacherClassesPage /></RoleRoute>} />

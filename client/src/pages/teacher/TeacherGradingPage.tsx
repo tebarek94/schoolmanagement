@@ -4,7 +4,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
-import { Award, Users, BookOpen, Calendar, Search } from 'lucide-react';
+import { Award, Users, BookOpen, Calendar, Search, Edit, Shield, UserCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface Student {
@@ -23,6 +23,8 @@ interface Assignment {
   dueDate: string;
   totalPoints: number;
   status: 'pending' | 'graded' | 'overdue';
+  teacher_id?: number;
+  teacher_name?: string;
 }
 
 interface Grade {
@@ -39,6 +41,7 @@ interface Grade {
 }
 
 export const TeacherGradingPage: React.FC = () => {
+  const { user, hasRole } = useAuth();
   const [students, setStudents] = useState<Student[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [grades, setGrades] = useState<Grade[]>([]);
@@ -58,10 +61,61 @@ export const TeacherGradingPage: React.FC = () => {
     ];
 
     const mockAssignments: Assignment[] = [
-      { id: 1, title: 'Algebra Quiz 1', subject: 'Mathematics', class: 'Grade 10 Mathematics', dueDate: '2024-01-15', totalPoints: 100, status: 'graded' },
-      { id: 2, title: 'Calculus Assignment', subject: 'Mathematics', class: 'Grade 11 Mathematics', dueDate: '2024-01-20', totalPoints: 50, status: 'pending' },
-      { id: 3, title: 'Geometry Test', subject: 'Mathematics', class: 'Grade 10 Mathematics', dueDate: '2024-01-25', totalPoints: 100, status: 'overdue' },
-      { id: 4, title: 'Statistics Project', subject: 'Mathematics', class: 'Grade 11 Mathematics', dueDate: '2024-02-01', totalPoints: 75, status: 'pending' }
+      { 
+        id: 1, 
+        title: 'Algebra Quiz 1', 
+        subject: 'Mathematics', 
+        class: 'Grade 10 Mathematics', 
+        dueDate: '2024-01-15', 
+        totalPoints: 100, 
+        status: 'graded',
+        teacher_id: user?.profile?.id || 1,
+        teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+      },
+      { 
+        id: 2, 
+        title: 'Calculus Assignment', 
+        subject: 'Mathematics', 
+        class: 'Grade 11 Mathematics', 
+        dueDate: '2024-01-20', 
+        totalPoints: 50, 
+        status: 'pending',
+        teacher_id: user?.profile?.id || 1,
+        teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+      },
+      { 
+        id: 3, 
+        title: 'Geometry Test', 
+        subject: 'Mathematics', 
+        class: 'Grade 10 Mathematics', 
+        dueDate: '2024-01-25', 
+        totalPoints: 100, 
+        status: 'overdue',
+        teacher_id: user?.profile?.id || 1,
+        teacher_name: user?.profile?.first_name + ' ' + user?.profile?.last_name || 'John Doe'
+      },
+      { 
+        id: 4, 
+        title: 'Statistics Project', 
+        subject: 'Mathematics', 
+        class: 'Grade 11 Mathematics', 
+        dueDate: '2024-02-01', 
+        totalPoints: 75, 
+        status: 'pending',
+        teacher_id: 2, // Different teacher
+        teacher_name: 'Jane Smith'
+      },
+      { 
+        id: 5, 
+        title: 'Physics Lab Report', 
+        subject: 'Physics', 
+        class: 'Grade 12 Physics', 
+        dueDate: '2024-02-05', 
+        totalPoints: 80, 
+        status: 'pending',
+        teacher_id: 3, // Different teacher
+        teacher_name: 'Mike Johnson'
+      }
     ];
 
     const mockGrades: Grade[] = [
@@ -70,13 +124,22 @@ export const TeacherGradingPage: React.FC = () => {
       { id: 3, studentId: 4, studentName: 'Emily Davis', assignmentId: 1, assignmentTitle: 'Algebra Quiz 1', pointsEarned: 78, totalPoints: 100, grade: 'C+', feedback: 'Needs improvement in problem-solving', submittedDate: '2024-01-15' }
     ];
 
+    // Filter assignments based on user role
+    let filteredAssignments = mockAssignments;
+    
+    if (hasRole('teacher') && !hasRole('admin')) {
+      // Teachers can only see their own assignments
+      filteredAssignments = mockAssignments.filter(assignment => assignment.teacher_id === user?.profile?.id);
+    }
+    // Admins can see all assignments (no filtering needed)
+
     setTimeout(() => {
       setStudents(mockStudents);
-      setAssignments(mockAssignments);
+      setAssignments(filteredAssignments);
       setGrades(mockGrades);
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [user, hasRole]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -143,16 +206,33 @@ export const TeacherGradingPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Grade Students</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {hasRole('admin') ? 'All Assignments & Grades' : 'Grade Students'}
+          </h1>
           <p className="text-gray-600">
-            Manage assignments and grade student submissions
+            {hasRole('admin') 
+              ? 'View and manage all assignments and grades across the school' 
+              : 'Manage assignments and grade student submissions'
+            }
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Award className="h-6 w-6 text-primary-600" />
-          <span className="text-sm font-medium text-gray-500">
-            {grades.length} Grades Recorded
-          </span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {hasRole('admin') ? (
+              <Shield className="h-6 w-6 text-blue-600" />
+            ) : (
+              <UserCheck className="h-6 w-6 text-green-600" />
+            )}
+            <span className="text-sm font-medium text-gray-500">
+              {hasRole('admin') ? 'Admin View' : 'Teacher View'}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Award className="h-6 w-6 text-primary-600" />
+            <span className="text-sm font-medium text-gray-500">
+              {grades.length} Grades Recorded
+            </span>
+          </div>
         </div>
       </div>
 
@@ -283,6 +363,9 @@ export const TeacherGradingPage: React.FC = () => {
                 <tr className="border-b">
                   <th className="text-left py-3 px-4 font-medium text-gray-900">Assignment</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-900">Class</th>
+                  {hasRole('admin') && (
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">Teacher</th>
+                  )}
                   <th className="text-left py-3 px-4 font-medium text-gray-900">Due Date</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-900">Points</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
@@ -299,6 +382,14 @@ export const TeacherGradingPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3 px-4">{assignment.class}</td>
+                    {hasRole('admin') && (
+                      <td className="py-3 px-4">
+                        <div className="flex items-center">
+                          <UserCheck className="h-4 w-4 mr-2 text-gray-400" />
+                          {assignment.teacher_name}
+                        </div>
+                      </td>
+                    )}
                     <td className="py-3 px-4">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2 text-gray-400" />
@@ -312,7 +403,8 @@ export const TeacherGradingPage: React.FC = () => {
                       </Badge>
                     </td>
                     <td className="py-3 px-4">
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" className="flex items-center">
+                        <Award className="w-4 h-4 mr-1" />
                         Grade Students
                       </Button>
                     </td>
@@ -370,7 +462,8 @@ export const TeacherGradingPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" className="flex items-center">
+                        <Edit className="w-4 h-4 mr-1" />
                         Edit Grade
                       </Button>
                     </td>

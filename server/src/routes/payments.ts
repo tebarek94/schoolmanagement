@@ -14,31 +14,31 @@ router.use(authenticate);
 // =============================================
 
 // Create payment (Admin only)
-router.post('/payments', adminOnly, paymentValidations.create, paymentController.createPayment);
+router.post('/', adminOnly, paymentValidations.create, paymentController.createPayment);
 
 // Get all payments (Admin only)
-router.get('/payments', adminOnly, commonValidations.pagination, paymentController.getPayments);
+router.get('/', adminOnly, commonValidations.pagination, paymentController.getPayments);
 
 // Get payment statistics (Admin only)
-router.get('/payments/stats', adminOnly, paymentController.getPaymentStats);
+router.get('/stats', adminOnly, paymentController.getPaymentStats);
 
 // Get outstanding payments (Admin only)
-router.get('/payments/outstanding', adminOnly, paymentController.getOutstandingPayments);
+router.get('/outstanding', adminOnly, paymentController.getOutstandingPayments);
 
 // Get monthly payment report (Admin only)
-router.get('/payments/monthly/:year/:month', adminOnly, paymentController.getMonthlyPaymentReport);
+router.get('/monthly/:year/:month', adminOnly, paymentController.getMonthlyPaymentReport);
 
 // Get student payments (Admin/Parent only)
-router.get('/students/:studentId/payments', parentOrAdmin, paymentController.getStudentPayments);
+router.get('/students/:studentId', parentOrAdmin, paymentController.getStudentPayments);
 
 // Get payment by ID (Admin only)
-router.get('/payments/:id', adminOnly, commonValidations.id, paymentController.getPaymentById);
+router.get('/:id', adminOnly, commonValidations.id, paymentController.getPaymentById);
 
 // Update payment (Admin only)
-router.put('/payments/:id', adminOnly, commonValidations.id, paymentController.updatePayment);
+router.put('/:id', adminOnly, commonValidations.id, paymentController.updatePayment);
 
 // Delete payment (Admin only)
-router.delete('/payments/:id', adminOnly, commonValidations.id, paymentController.deletePayment);
+router.delete('/:id', adminOnly, commonValidations.id, paymentController.deletePayment);
 
 // =============================================
 // FEE STRUCTURE ROUTES

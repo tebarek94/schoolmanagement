@@ -4,8 +4,7 @@ import {
   FeeStructure, 
   PaymentRequest, 
   ApiResponse, 
-  PaginationQuery,
-  PaymentReport
+  PaginationQuery
 } from '../types';
 
 export class PaymentService {
@@ -32,19 +31,14 @@ export class PaymentService {
 
   // Get payments by student
   async getStudentPayments(studentId: number, startDate?: string, endDate?: string): Promise<ApiResponse<Payment[]>> {
-    return await apiService.get<ApiResponse<Payment[]>>(`/payments/student/${studentId}`, {
+    return await apiService.get<ApiResponse<Payment[]>>(`/payments/students/${studentId}/payments`, {
       params: { startDate, endDate }
     });
   }
 
-  // Get pending payments
-  async getPendingPayments(params?: PaginationQuery): Promise<ApiResponse<Payment[]>> {
-    return await apiService.get<ApiResponse<Payment[]>>('/payments/pending', { params });
-  }
-
-  // Get overdue payments
-  async getOverduePayments(params?: PaginationQuery): Promise<ApiResponse<Payment[]>> {
-    return await apiService.get<ApiResponse<Payment[]>>('/payments/overdue', { params });
+  // Get outstanding payments (pending/overdue)
+  async getOutstandingPayments(params?: PaginationQuery): Promise<ApiResponse<Payment[]>> {
+    return await apiService.get<ApiResponse<Payment[]>>('/payments/outstanding', { params });
   }
 
   // Fee Structures
@@ -68,12 +62,12 @@ export class PaymentService {
     return await apiService.delete<ApiResponse<void>>(`/payments/fee-structures/${id}`);
   }
 
-  // Get fee structures by grade
-  async getFeeStructuresByGrade(gradeId: number, academicYearId?: number, termId?: number): Promise<ApiResponse<FeeStructure[]>> {
-    return await apiService.get<ApiResponse<FeeStructure[]>>(`/payments/fee-structures/grade/${gradeId}`, {
-      params: { academicYearId, termId }
-    });
-  }
+  // Get fee structures by grade (not implemented in backend yet)
+  // async getFeeStructuresByGrade(gradeId: number, academicYearId?: number, termId?: number): Promise<ApiResponse<FeeStructure[]>> {
+  //   return await apiService.get<ApiResponse<FeeStructure[]>>(`/payments/fee-structures/grade/${gradeId}`, {
+  //     params: { academicYearId, termId }
+  //   });
+  // }
 
   // Payment statistics
   async getPaymentStats(startDate?: string, endDate?: string): Promise<ApiResponse<any>> {
@@ -82,73 +76,74 @@ export class PaymentService {
     });
   }
 
-  // Get student payment summary
-  async getStudentPaymentSummary(studentId: number, academicYearId?: number, termId?: number): Promise<ApiResponse<any>> {
-    return await apiService.get<ApiResponse<any>>(`/payments/student/${studentId}/summary`, {
-      params: { academicYearId, termId }
-    });
-  }
+  // Get student payment summary (not implemented in backend yet)
+  // async getStudentPaymentSummary(studentId: number, academicYearId?: number, termId?: number): Promise<ApiResponse<any>> {
+  //   return await apiService.get<ApiResponse<any>>(`/payments/students/${studentId}/summary`, {
+  //     params: { academicYearId, termId }
+  //   });
+  // }
 
-  // Generate payment receipt
-  async generatePaymentReceipt(paymentId: number): Promise<Blob> {
-    const response = await apiService.get(`/payments/${paymentId}/receipt`, {
-      responseType: 'blob',
-    });
-    return response;
-  }
+  // Generate payment receipt (not implemented in backend yet)
+  // async generatePaymentReceipt(paymentId: number): Promise<Blob> {
+  //   const response = await apiService.get(`/payments/${paymentId}/receipt`, {
+  //     responseType: 'blob',
+  //   });
+  //   return response;
+  // }
 
-  // Generate fee statement
-  async generateFeeStatement(studentId: number, academicYearId?: number, termId?: number): Promise<Blob> {
-    const response = await apiService.get(`/payments/student/${studentId}/fee-statement`, {
-      params: { academicYearId, termId },
-      responseType: 'blob',
-    });
-    return response;
-  }
+  // Generate fee statement (not implemented in backend yet)
+  // async generateFeeStatement(studentId: number, academicYearId?: number, termId?: number): Promise<Blob> {
+  //   const response = await apiService.get(`/payments/students/${studentId}/fee-statement`, {
+  //     params: { academicYearId, termId },
+  //     responseType: 'blob',
+  //   });
+  //   return response;
+  // }
 
-  // Export payments
-  async exportPayments(format: 'csv' | 'excel' | 'pdf' = 'excel', params?: PaginationQuery): Promise<Blob> {
-    const response = await apiService.get('/payments/export', {
-      params: { format, ...params },
-      responseType: 'blob',
-    });
-    return response;
-  }
+  // Export payments (not implemented in backend yet)
+  // async exportPayments(format: 'csv' | 'excel' | 'pdf' = 'excel', params?: PaginationQuery): Promise<Blob> {
+  //   const response = await apiService.get('/payments/export', {
+  //     params: { format, ...params },
+  //     responseType: 'blob',
+  //   });
+  //   return response;
+  // }
 
-  // Get payment methods
-  async getPaymentMethods(): Promise<ApiResponse<string[]>> {
-    return await apiService.get<ApiResponse<string[]>>('/payments/methods');
-  }
+  // Get payment methods (not implemented in backend yet)
+  // async getPaymentMethods(): Promise<ApiResponse<string[]>> {
+  //   return await apiService.get<ApiResponse<string[]>>('/payments/methods');
+  // }
 
-  // Get payment statuses
-  async getPaymentStatuses(): Promise<ApiResponse<string[]>> {
-    return await apiService.get<ApiResponse<string[]>>('/payments/statuses');
-  }
+  // Get payment statuses (not implemented in backend yet)
+  // async getPaymentStatuses(): Promise<ApiResponse<string[]>> {
+  //   return await apiService.get<ApiResponse<string[]>>('/payments/statuses');
+  // }
 
-  // Get fee types
-  async getFeeTypes(): Promise<ApiResponse<string[]>> {
-    return await apiService.get<ApiResponse<string[]>>('/payments/fee-types');
-  }
+  // Get fee types (not implemented in backend yet)
+  // async getFeeTypes(): Promise<ApiResponse<string[]>> {
+  //   return await apiService.get<ApiResponse<string[]>>('/payments/fee-types');
+  // }
 
-  // Bulk payment processing
-  async processBulkPayments(paymentsData: PaymentRequest[]): Promise<ApiResponse<Payment[]>> {
-    return await apiService.post<ApiResponse<Payment[]>>('/payments/bulk', paymentsData);
-  }
+  // Bulk payment processing (not implemented in backend yet)
+  // async processBulkPayments(paymentsData: PaymentRequest[]): Promise<ApiResponse<Payment[]>> {
+  //   return await apiService.post<ApiResponse<Payment[]>>('/payments/bulk', paymentsData);
+  // }
 
-  // Payment reminders
-  async sendPaymentReminders(studentIds: number[]): Promise<ApiResponse<void>> {
-    return await apiService.post<ApiResponse<void>>('/payments/send-reminders', { studentIds });
-  }
+  // Payment reminders (not implemented in backend yet)
+  // async sendPaymentReminders(studentIds: number[]): Promise<ApiResponse<void>> {
+  //   return await apiService.post<ApiResponse<void>>('/payments/send-reminders', { studentIds });
+  // }
 
-  // Payment analytics
-  async getPaymentAnalytics(startDate?: string, endDate?: string): Promise<ApiResponse<any>> {
-    return await apiService.get<ApiResponse<any>>('/payments/analytics', {
-      params: { startDate, endDate }
-    });
-  }
+  // Payment analytics (not implemented in backend yet)
+  // async getPaymentAnalytics(startDate?: string, endDate?: string): Promise<ApiResponse<any>> {
+  //   return await apiService.get<ApiResponse<any>>('/payments/analytics', {
+  //     params: { startDate, endDate }
+  //   });
+  // }
 }
 
 export const paymentService = new PaymentService();
+
 
 
 

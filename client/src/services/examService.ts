@@ -5,30 +5,29 @@ import {
   ExamRequest, 
   ExamResultRequest, 
   ApiResponse, 
-  PaginationQuery,
-  ExamReport
+  PaginationQuery
 } from '../types';
 
 export class ExamService {
   // Examinations
   async getExaminations(params?: PaginationQuery): Promise<ApiResponse<Examination[]>> {
-    return await apiService.get<ApiResponse<Examination[]>>('/exams', { params });
+    return await apiService.get<ApiResponse<Examination[]>>('/exams/examinations', { params });
   }
 
   async getExaminationById(id: number): Promise<ApiResponse<Examination>> {
-    return await apiService.get<ApiResponse<Examination>>(`/exams/${id}`);
+    return await apiService.get<ApiResponse<Examination>>(`/exams/examinations/${id}`);
   }
 
   async createExamination(examData: ExamRequest): Promise<ApiResponse<Examination>> {
-    return await apiService.post<ApiResponse<Examination>>('/exams', examData);
+    return await apiService.post<ApiResponse<Examination>>('/exams/examinations', examData);
   }
 
   async updateExamination(id: number, examData: Partial<ExamRequest>): Promise<ApiResponse<Examination>> {
-    return await apiService.put<ApiResponse<Examination>>(`/exams/${id}`, examData);
+    return await apiService.put<ApiResponse<Examination>>(`/exams/examinations/${id}`, examData);
   }
 
   async deleteExamination(id: number): Promise<ApiResponse<void>> {
-    return await apiService.delete<ApiResponse<void>>(`/exams/${id}`);
+    return await apiService.delete<ApiResponse<void>>(`/exams/examinations/${id}`);
   }
 
   // Get examinations by section
@@ -47,7 +46,7 @@ export class ExamService {
 
   // Get upcoming examinations
   async getUpcomingExaminations(sectionId?: number, days?: number): Promise<ApiResponse<Examination[]>> {
-    return await apiService.get<ApiResponse<Examination[]>>('/exams/upcoming', {
+    return await apiService.get<ApiResponse<Examination[]>>('/exams/examinations/upcoming', {
       params: { sectionId, days }
     });
   }
@@ -150,6 +149,7 @@ export class ExamService {
 }
 
 export const examService = new ExamService();
+
 
 
 

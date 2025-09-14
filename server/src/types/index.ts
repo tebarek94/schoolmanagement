@@ -80,6 +80,25 @@ export interface Parent {
   updated_at: Date;
 }
 
+export interface Admin {
+  id: number;
+  user_id: number;
+  admin_id: string;
+  first_name: string;
+  last_name: string;
+  middle_name?: string;
+  phone?: string;
+  address?: string;
+  date_of_birth?: Date;
+  gender: 'Male' | 'Female' | 'Other';
+  department?: string;
+  access_level: 'Full' | 'Limited' | 'Read Only';
+  hire_date: Date;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface Grade {
   id: number;
   name: string;
@@ -227,7 +246,7 @@ export interface LoginResponse {
     id: number;
     email: string;
     role: string;
-    profile?: Student | Teacher | Parent;
+    profile?: Student | Teacher | Parent | Admin;
   };
 }
 
@@ -235,7 +254,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role: string;
-  profile: Partial<Student | Teacher | Parent>;
+  profile: Partial<Student | Teacher | Parent | Admin>;
 }
 
 export interface CreateStudentRequest {

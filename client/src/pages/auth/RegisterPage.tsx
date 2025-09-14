@@ -8,7 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { authService } from '../../services/authService';
 import { RegisterRequest } from '../../types';
-import { UserPlus, Mail, Lock, User as UserIcon, Phone, MapPin, Calendar, GraduationCap, Briefcase, Users } from 'lucide-react';
+import { UserPlus, Mail, Lock, User as UserIcon, Phone, MapPin, Calendar, GraduationCap, Briefcase, Users, Shield } from 'lucide-react';
 import { getRoleBasedRedirect } from '../../utils/authUtils';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -40,6 +40,10 @@ interface RegisterFormData {
   occupation?: string;
   workplace?: string;
   relationship?: string;
+  // Admin specific fields
+  adminId?: string;
+  department?: string;
+  accessLevel?: string;
 }
 
 const RegisterPage: React.FC = () => {
@@ -71,6 +75,7 @@ const RegisterPage: React.FC = () => {
     { value: 'student', label: 'Student' },
     { value: 'teacher', label: 'Teacher' },
     { value: 'parent', label: 'Parent' },
+    { value: 'admin', label: 'Administrator' },
   ];
 
   const genderOptions = [
@@ -101,6 +106,13 @@ const RegisterPage: React.FC = () => {
 
       // Add role-specific fields
       if (data.role === 'student') {
+        // Validate required student fields
+        if (!data.admissionNumber) {
+          toast.error('Admission number is required for student registration');
+          setIsLoading(false);
+          return;
+        }
+        
         profileData = {
           ...profileData,
           admission_number: data.admissionNumber,
@@ -111,6 +123,13 @@ const RegisterPage: React.FC = () => {
           admission_date: new Date().toISOString().split('T')[0],
         };
       } else if (data.role === 'teacher') {
+        // Validate required teacher fields
+        if (!data.employeeId) {
+          toast.error('Employee ID is required for teacher registration');
+          setIsLoading(false);
+          return;
+        }
+        
         profileData = {
           ...profileData,
           employee_id: data.employeeId,
@@ -127,6 +146,21 @@ const RegisterPage: React.FC = () => {
           workplace: data.workplace,
           relationship: data.relationship || 'Other',
         };
+      } else if (data.role === 'admin') {
+        // Validate required admin fields
+        if (!data.adminId) {
+          toast.error('Admin ID is required for administrator registration');
+          setIsLoading(false);
+          return;
+        }
+        
+        profileData = {
+          ...profileData,
+          admin_id: data.adminId,
+          department: data.department,
+          access_level: data.accessLevel || 'Full',
+          hire_date: new Date().toISOString().split('T')[0],
+        };
       }
 
       const registerData: RegisterRequest = {
@@ -135,6 +169,9 @@ const RegisterPage: React.FC = () => {
         role: data.role.charAt(0).toUpperCase() + data.role.slice(1), // Capitalize first letter
         profile: profileData,
       };
+
+      // Debug: Log the data being sent
+      console.log('Registration data being sent:', registerData);
 
       await authService.register(registerData);
       
@@ -323,7 +360,15 @@ const RegisterPage: React.FC = () => {
                     <Input
                       label="Admission Number *"
                       placeholder="Enter admission number"
-                      {...register('admissionNumber', { required: 'Admission number is required' })}
+                      {...register('admissionNumber', { 
+                        required: 'Admission number is required',
+                        validate: (value) => {
+                          if (selectedRole === 'student' && !value) {
+                            return 'Admission number is required for students';
+                          }
+                          return true;
+                        }
+                      })}
                       error={errors.admissionNumber?.message}
                     />
 
@@ -435,6 +480,41 @@ const RegisterPage: React.FC = () => {
                     ]}
                     {...register('relationship', { required: 'Relationship is required' })}
                     error={errors.relationship?.message}
+                  />
+                </div>
+              )}
+
+              {selectedRole === 'admin' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                    <Shield className="h-5 w-5 mr-2" />
+                    Administrator Information
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Admin ID *"
+                      placeholder="Enter admin ID"
+                      {...register('adminId', { required: 'Admin ID is required' })}
+                      error={errors.adminId?.message}
+                    />
+
+                    <Input
+                      label="Department"
+                      placeholder="Enter department"
+                      {...register('department')}
+                    />
+                  </div>
+
+                  <Select
+                    label="Access Level"
+                    placeholder="Select access level"
+                    options={[
+                      { value: 'Full', label: 'Full Access' },
+                      { value: 'Limited', label: 'Limited Access' },
+                      { value: 'Read Only', label: 'Read Only' },
+                    ]}
+                    {...register('accessLevel')}
                   />
                 </div>
               )}

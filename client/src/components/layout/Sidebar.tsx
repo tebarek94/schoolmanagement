@@ -35,12 +35,13 @@ const navigation: NavItem[] = [
     icon: LayoutDashboard,
     roles: ['Admin', 'Teacher', 'Student', 'Parent'],
   },
-  // Admin & Teacher Management
+  
+  // === ADMIN ONLY SECTIONS ===
   {
     name: 'Students',
     href: '/students',
     icon: Users,
-    roles: ['Admin', 'Teacher'],
+    roles: ['Admin'],
   },
   {
     name: 'Teachers',
@@ -52,35 +53,52 @@ const navigation: NavItem[] = [
     name: 'Parents',
     href: '/parents',
     icon: UserCheck,
-    roles: ['Admin', 'Teacher'],
+    roles: ['Admin'],
   },
-  // Academic Management
   {
-    name: 'Classes',
+    name: 'Classes & Sections',
     href: '/academic/classes',
     icon: School,
-    roles: ['Admin', 'Teacher'],
+    roles: ['Admin'],
   },
   {
     name: 'Subjects',
     href: '/academic/subjects',
     icon: BookMarked,
-    roles: ['Admin', 'Teacher'],
-  },
-  // Student & Parent Access
-  {
-    name: 'My Grades',
-    href: '/grades',
-    icon: Award,
-    roles: ['Student', 'Parent'],
+    roles: ['Admin'],
   },
   {
-    name: 'My Courses',
-    href: '/courses',
-    icon: BookOpen,
-    roles: ['Student', 'Parent'],
+    name: 'Attendance',
+    href: '/attendance',
+    icon: Calendar,
+    roles: ['Admin'],
   },
-  // Teacher Course Management
+  {
+    name: 'Exams',
+    href: '/exams',
+    icon: FileText,
+    roles: ['Admin'],
+  },
+  {
+    name: 'Payments',
+    href: '/payments',
+    icon: CreditCard,
+    roles: ['Admin'],
+  },
+  {
+    name: 'Reports',
+    href: '/reports',
+    icon: BarChart3,
+    roles: ['Admin'],
+  },
+  {
+    name: 'Settings',
+    href: '/settings',
+    icon: Settings,
+    roles: ['Admin'],
+  },
+
+  // === TEACHER ONLY SECTIONS ===
   {
     name: 'My Classes',
     href: '/teacher/classes',
@@ -93,31 +111,25 @@ const navigation: NavItem[] = [
     icon: Award,
     roles: ['Teacher'],
   },
-  // Attendance & Exams
+
+  // === STUDENT & PARENT SECTIONS ===
   {
-    name: 'Attendance',
-    href: '/attendance',
-    icon: Calendar,
-    roles: ['Admin', 'Teacher'],
+    name: 'My Grades',
+    href: '/grades',
+    icon: Award,
+    roles: ['Student', 'Parent'],
   },
   {
-    name: 'Exams',
-    href: '/exams',
-    icon: FileText,
-    roles: ['Admin', 'Teacher'],
+    name: 'My Courses',
+    href: '/courses',
+    icon: BookOpen,
+    roles: ['Student', 'Parent'],
   },
   {
     name: 'My Exams',
     href: '/student/exams',
     icon: FileText,
     roles: ['Student', 'Parent'],
-  },
-  // Payments & Reports
-  {
-    name: 'Payments',
-    href: '/payments',
-    icon: CreditCard,
-    roles: ['Admin'],
   },
   {
     name: 'My Payments',
@@ -126,23 +138,10 @@ const navigation: NavItem[] = [
     roles: ['Student', 'Parent'],
   },
   {
-    name: 'Reports',
-    href: '/reports',
-    icon: BarChart3,
-    roles: ['Admin', 'Teacher'],
-  },
-  {
     name: 'My Progress',
     href: '/student/progress',
     icon: TrendingUp,
     roles: ['Student', 'Parent'],
-  },
-  // Settings
-  {
-    name: 'Settings',
-    href: '/settings',
-    icon: Settings,
-    roles: ['Admin'],
   },
 ];
 

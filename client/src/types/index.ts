@@ -3,7 +3,7 @@ export interface User {
   id: number;
   email: string;
   role: string;
-  profile?: Student | Teacher | Parent;
+  profile?: Student | Teacher | Parent | Admin;
 }
 
 export interface LoginRequest {
@@ -21,7 +21,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role: string;
-  profile: Partial<Student | Teacher | Parent>;
+  profile: Partial<Student | Teacher | Parent | Admin>;
 }
 
 // Student Types
@@ -129,6 +129,26 @@ export interface Parent {
   occupation?: string;
   relationship: 'Father' | 'Mother' | 'Guardian' | 'Other';
   is_primary: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Admin Types
+export interface Admin {
+  id: number;
+  user_id: number;
+  admin_id: string;
+  first_name: string;
+  last_name: string;
+  middle_name?: string;
+  phone?: string;
+  address?: string;
+  date_of_birth?: string;
+  gender: 'Male' | 'Female' | 'Other';
+  department?: string;
+  access_level: 'Full' | 'Limited' | 'Read Only';
+  hire_date: string;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }

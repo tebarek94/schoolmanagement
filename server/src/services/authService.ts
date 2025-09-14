@@ -8,6 +8,7 @@ import {
   Student, 
   Teacher, 
   Parent, 
+  Admin,
   LoginRequest, 
   LoginResponse, 
   RegisterRequest,
@@ -55,8 +56,8 @@ export class AuthService {
   }
 
   // Get user profile based on role
-  private async getUserProfileByRole(userId: number, role: string): Promise<Student | Teacher | Parent | null> {
-    let profile: Student | Teacher | Parent | null = null;
+  private async getUserProfileByRole(userId: number, role: string): Promise<Student | Teacher | Parent | Admin | null> {
+    let profile: Student | Teacher | Parent | Admin | null = null;
     
     switch (role) {
       case 'Student':
@@ -81,6 +82,15 @@ export class AuthService {
           [userId]
         );
         profile = parents.length > 0 ? parents[0] : null;
+        break;
+        
+      case 'Admin':
+        // For now, admins are stored in the teachers table with special privileges
+        const admins = await executeQuery<Teacher[]>(
+          'SELECT * FROM teachers WHERE user_id = ?',
+          [userId]
+        );
+        profile = admins.length > 0 ? admins[0] : null;
         break;
     }
     
@@ -283,6 +293,43 @@ export class AuthService {
         profileId = (parentResult as any).insertId;
         break;
         
+      case 'Admin':
+        if (!profile || !('admin_id' in profile)) {
+          throw new CustomError('Admin profile data is required', 400);
+        }
+        
+        // Cast profile to Admin type for type safety
+        const adminProfile = profile as Admin;
+        
+        // For now, we'll create admin as a teacher with special privileges
+        // In a real system, you might want to create a separate admins table
+        const adminResult = await executeQuery(
+          `INSERT INTO teachers (
+            user_id, employee_id, first_name, last_name, middle_name, 
+            phone, address, date_of_birth, gender, qualification, 
+            specialization, hire_date, salary, is_active
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            userId,
+            adminProfile.admin_id,
+            adminProfile.first_name,
+            adminProfile.last_name,
+            adminProfile.middle_name || null,
+            adminProfile.phone || null,
+            adminProfile.address || null,
+            adminProfile.date_of_birth || null,
+            adminProfile.gender,
+            adminProfile.department || 'Administration', // Use department as qualification
+            'Administrator', // Specialization
+            adminProfile.hire_date,
+            null, // No salary for admin
+            true,
+          ]
+        );
+        
+        profileId = (adminResult as any).insertId;
+        break;
+        
       default:
         throw new CustomError('Invalid role for registration', 400);
     }
@@ -304,7 +351,7 @@ export class AuthService {
         id: userId,
         email: email,
         role: role,
-        profile: profile as any,
+        profile: profile as Student | Teacher | Parent | Admin,
       },
     };
   }
@@ -380,7 +427,7 @@ export class AuthService {
   }
 
   // Get user profile
-  async getUserProfile(userId: number): Promise<{ user: User; profile: Student | Teacher | Parent | null }> {
+  async getUserProfile(userId: number): Promise<{ user: User; profile: Student | Teacher | Parent | Admin | null }> {
     // Get user with role
     const users = await executeQuery<User[]>(
       `SELECT u.*, r.name as role_name 
